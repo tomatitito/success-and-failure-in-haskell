@@ -71,3 +71,6 @@ image:
   container:
     name: success-in-haskell
     base: fpco/stack-run
+    add:
+      static/: /opt/app/static
+      config/: /opt/app/config
