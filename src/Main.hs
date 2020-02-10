@@ -14,8 +14,15 @@ requireAlphaNum password =
     False -> Nothing
     True -> Just password
 
+cleanWhitespace :: String -> Maybe String
+cleanWhitespace "" = Nothing
+cleanWhitespace (x:xs) =
+  case isSpace x of
+    True -> cleanWhitespace xs
+    False -> Just (x:xs)
+    
 main :: IO ()
 main = do
   putStr "Enter Password\n"
   password <- getLine
-  print (requireAlphaNum password)
+  print (cleanWhitespace password)
