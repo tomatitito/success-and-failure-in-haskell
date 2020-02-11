@@ -4,7 +4,7 @@ import Data.Char
 
 checkPasswordLength :: String -> Maybe String
 checkPasswordLength password =
-  case length password > 20 of
+  case length password > 20 || length password < 10 of
     True -> Nothing
     False -> Just password
 
@@ -25,4 +25,4 @@ main :: IO ()
 main = do
   putStr "Enter Password\n"
   password <- getLine
-  print (cleanWhitespace password)
+  print (checkPasswordLength password)
