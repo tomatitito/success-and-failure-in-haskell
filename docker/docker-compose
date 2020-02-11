@@ -1,9 +1,0 @@
-version: '2'
-services:
-  success-in-haskell:
-    build:
-      context: .
-      args:
-        - BINARY_PATH
-    image: success-in-haskell-base
-    command: /opt/app/main
