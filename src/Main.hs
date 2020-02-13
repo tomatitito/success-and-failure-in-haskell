@@ -27,8 +27,14 @@ validatePassword password =
     >>= requireAlphaNum
     >>= checkPasswordLength
 
+reverseLine :: IO ()
+reverseLine = do
+  word <- getLine
+  print $ reverse word
+
 main :: IO ()
 main = do
   putStr "Enter Password\n"
   password <- getLine
   print (validatePassword password)
+  print reverseLine
