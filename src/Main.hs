@@ -23,11 +23,9 @@ cleanWhitespace (x:xs) =
 
 validatePassword :: String -> Maybe String
 validatePassword password =
-  case cleanWhitespace password of
-    Nothing -> Nothing
-    (Just pw) -> case requireAlphaNum pw of
-                   Nothing -> Nothing
-                   (Just pw) -> checkPasswordLength pw
+  cleanWhitespace password
+    >>= requireAlphaNum
+    >>= checkPasswordLength
 
 main :: IO ()
 main = do
