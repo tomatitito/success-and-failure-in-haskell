@@ -20,9 +20,17 @@ cleanWhitespace (x:xs) =
   case isSpace x of
     True -> cleanWhitespace xs
     False -> Just (x:xs)
-    
+
+validatePassword :: String -> Maybe String
+validatePassword password =
+  case cleanWhitespace password of
+    Nothing -> Nothing
+    (Just pw) -> case requireAlphaNum pw of
+                   Nothing -> Nothing
+                   (Just pw) -> checkPasswordLength pw
+
 main :: IO ()
 main = do
   putStr "Enter Password\n"
   password <- getLine
-  print (checkPasswordLength password)
+  print (validatePassword password)
