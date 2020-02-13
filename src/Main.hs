@@ -37,4 +37,3 @@ main = do
   putStr "Enter Password\n"
   password <- getLine
   print (validatePassword password)
-  print reverseLine
