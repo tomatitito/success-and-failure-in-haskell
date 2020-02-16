@@ -8,11 +8,11 @@ checkPasswordLength password =
     True -> Left "Your password must be between 10 and 20 characters long"
     False -> Right password
 
-requireAlphaNum :: String -> Maybe String
+requireAlphaNum :: String -> Either String String
 requireAlphaNum password =
   case all isAlphaNum password of
-    False -> Nothing
-    True -> Just password
+    False -> Left "Your password can only contain alphanumeric characters"
+    True -> Right password
 
 cleanWhitespace :: String -> Maybe String
 cleanWhitespace "" = Nothing
