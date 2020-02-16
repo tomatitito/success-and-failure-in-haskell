@@ -2,11 +2,11 @@ module Main where
 
 import Data.Char
 
-checkPasswordLength :: String -> Maybe String
+checkPasswordLength :: String -> Either String String
 checkPasswordLength password =
   case length password > 20 || length password < 10 of
-    True -> Nothing
-    False -> Just password
+    True -> Left "Your password must be between 10 and 20 characters long"
+    False -> Right password
 
 requireAlphaNum :: String -> Maybe String
 requireAlphaNum password =
