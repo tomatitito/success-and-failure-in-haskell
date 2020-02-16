@@ -14,12 +14,13 @@ requireAlphaNum password =
     False -> Left "Your password can only contain alphanumeric characters"
     True -> Right password
 
-cleanWhitespace :: String -> Maybe String
-cleanWhitespace "" = Nothing
+-- TODO: Refactor using Either
+cleanWhitespace :: String -> Either String String
+cleanWhitespace "" = Left "Password must not be empty"
 cleanWhitespace (x:xs) =
   case isSpace x of
     True -> cleanWhitespace xs
-    False -> Just (x:xs)
+    False -> Right (x:xs)
 
 validatePassword :: String -> Maybe String
 validatePassword password =
