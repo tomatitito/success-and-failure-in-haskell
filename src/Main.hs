@@ -23,14 +23,28 @@ cleanWhitespace (x:xs) =
 
 validatePassword :: String -> Maybe String
 validatePassword password =
-  cleanWhitespace password
-    >>= requireAlphaNum
-    >>= checkPasswordLength
+    (bindMaybe (bindMaybe (cleanWhitespace password) requireAlphaNum) checkPasswordLength)
+--  cleanWhitespace password
+--    >>= requireAlphaNum
+--    >>= checkPasswordLength
 
 reverseLine :: IO ()
 reverseLine = do
   word <- getLine
   print $ reverse word
+
+bindMaybe :: Maybe a -> (a -> Maybe b) -> Maybe b
+--bindMaybe = (>>=)
+bindMaybe (Just a) f = f a
+bindMaybe Nothing f = Nothing
+
+data StringOrValue a = Str String | Val a deriving Show
+
+bindStringOrValue :: StringOrValue a -> (a -> StringOrValue b) -> StringOrValue b
+bindStringOrValue x f =
+  case x of
+    Str x' -> Str x'
+    Val x' -> f x'
 
 main :: IO ()
 main = do
