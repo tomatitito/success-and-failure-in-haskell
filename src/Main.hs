@@ -22,12 +22,12 @@ cleanWhitespace (x:xs) =
     True -> cleanWhitespace xs
     False -> Right (x:xs)
 
-validatePassword :: String -> Maybe String
+validatePassword :: String -> Either String String
 validatePassword password =
-    (bindMaybe (bindMaybe (cleanWhitespace password) requireAlphaNum) checkPasswordLength)
---  cleanWhitespace password
---    >>= requireAlphaNum
---    >>= checkPasswordLength
+--    (bindMaybe (bindMaybe (cleanWhitespace password) requireAlphaNum) checkPasswordLength)
+  cleanWhitespace password
+    >>= requireAlphaNum
+    >>= checkPasswordLength
 
 reverseLine :: IO ()
 reverseLine = do
