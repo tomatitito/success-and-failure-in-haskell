@@ -18,11 +18,11 @@ checkPasswordLength username =
     True -> Left (Error "Username cannot be longer than 15 characters")
     False -> Right (Username username)
 
-requireAlphaNum :: String -> Either String String
-requireAlphaNum password =
-  case all isAlphaNum password of
-    False -> Left "Your password can only contain alphanumeric characters"
-    True -> Right password
+requireAlphaNum :: String -> Either Error String
+requireAlphaNum xs =
+  case all isAlphaNum xs of
+    False -> Left (Error "Only alphanumeric characters are allowed")
+    True -> Right xs
 
 cleanWhitespace :: String -> Either String String
 cleanWhitespace "" = Left "Password must not be empty"
