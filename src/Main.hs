@@ -2,7 +2,11 @@ module Main where
 
 import Data.Char
 
-checkPasswordLength :: String -> Either String String
+newtype Password = Password String deriving Show
+newtype Username = Username String deriving Show
+newtype Error = Error String deriving Show
+
+checkPasswordLength :: String -> Either Error Password
 checkPasswordLength password =
   case length password > 20 || length password < 10 of
     True -> Left "Your password must be between 10 and 20 characters long"
@@ -14,7 +18,6 @@ requireAlphaNum password =
     False -> Left "Your password can only contain alphanumeric characters"
     True -> Right password
 
--- TODO: Refactor using Either
 cleanWhitespace :: String -> Either String String
 cleanWhitespace "" = Left "Password must not be empty"
 cleanWhitespace (x:xs) =
