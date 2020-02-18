@@ -9,8 +9,8 @@ newtype Error = Error String deriving Show
 checkPasswordLength :: String -> Either Error Password
 checkPasswordLength password =
   case length password > 20 || length password < 10 of
-    True -> Left "Your password must be between 10 and 20 characters long"
-    False -> Right password
+    True -> Left (Error "Your password must be between 10 and 20 characters long")
+    False -> Right (Password password)
 
 requireAlphaNum :: String -> Either String String
 requireAlphaNum password =
