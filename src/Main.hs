@@ -11,6 +11,12 @@ checkPasswordLength password =
   case length password > 20 || length password < 10 of
     True -> Left (Error "Your password must be between 10 and 20 characters long")
     False -> Right (Password password)
+    
+checkUsernameLength :: String -> Either Error Username
+checkPasswordLength username =
+  case length username > 15 of
+    True -> Left (Error "Username cannot be longer than 15 characters")
+    False -> Right (Username username)
 
 requireAlphaNum :: String -> Either String String
 requireAlphaNum password =
