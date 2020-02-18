@@ -18,6 +18,12 @@ checkUsernameLength username =
     True -> Left (Error "Username cannot be longer than 15 characters")
     False -> Right (Username username)
 
+checkLength :: Int -> String -> Either Error String
+checkLength len xs =
+  case (length xs) > len of
+    True -> Left (Error "Too many characters given")
+    False -> Right xs
+
 requireAlphaNum :: String -> Either Error String
 requireAlphaNum xs =
   case all isAlphaNum xs of
