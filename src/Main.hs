@@ -24,8 +24,8 @@ requireAlphaNum xs =
     False -> Left (Error "Only alphanumeric characters are allowed")
     True -> Right xs
 
-cleanWhitespace :: String -> Either String String
-cleanWhitespace "" = Left "Password must not be empty"
+cleanWhitespace :: String -> Either Error String
+cleanWhitespace "" = Left (Error "Empty string is not allowed")
 cleanWhitespace (x:xs) =
   case isSpace x of
     True -> cleanWhitespace xs
