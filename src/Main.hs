@@ -59,7 +59,7 @@ bindStringOrValue x f =
 main :: IO ()
 main = do
   putStr "Enter Password\n"
-  password <- getLine
+  password <-Password <$> getLine
   print (validatePassword password)
 
 printTestResult :: Either String () -> IO ()
