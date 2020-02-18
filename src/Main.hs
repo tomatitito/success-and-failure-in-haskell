@@ -13,7 +13,7 @@ checkPasswordLength password =
     False -> Right (Password password)
     
 checkUsernameLength :: String -> Either Error Username
-checkPasswordLength username =
+checkUsernameLength username =
   case length username > 15 of
     True -> Left (Error "Username cannot be longer than 15 characters")
     False -> Right (Username username)
