@@ -37,6 +37,12 @@ validatePassword (Password password) =
   cleanWhitespace password
     >>= requireAlphaNum
     >>= checkPasswordLength
+    
+validateUsername :: Username -> Either Error Username
+validateUsername (Username username) =
+  cleanWhitespace username
+    >>= requireAlphaNum
+    >>= checkUsernameLength
 
 reverseLine :: IO ()
 reverseLine = do
