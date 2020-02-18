@@ -31,8 +31,8 @@ cleanWhitespace (x:xs) =
     True -> cleanWhitespace xs
     False -> Right (x:xs)
 
-validatePassword :: String -> Either String String
-validatePassword password =
+validatePassword :: Password -> Either Error Password
+validatePassword (Password password) =
 --    (bindMaybe (bindMaybe (cleanWhitespace password) requireAlphaNum) checkPasswordLength)
   cleanWhitespace password
     >>= requireAlphaNum
