@@ -86,8 +86,7 @@ main =
     username <- Username <$> getLine
     putStr "Enter password\n"
     password <-Password <$> getLine
-    print (validateUsername username)
-    print (validatePassword password)
+    print (makeUser username password)
 --  putStr "Enter Password\n"
 --    >> Password <$> getLine
 --    >>= print <$> validatePassword
