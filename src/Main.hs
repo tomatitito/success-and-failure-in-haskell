@@ -6,6 +6,13 @@ newtype Password = Password String deriving Show
 newtype Username = Username String deriving Show
 newtype Error = Error String deriving Show
 
+data User = User Username Password deriving Show
+
+makeUser :: Username -> Password -> Either Error User
+makeUser username password = 
+  User <$> validateUsername username
+       <*> validatePassword password
+
 checkPasswordLength :: String -> Either Error Password
 checkPasswordLength password =
   case length password > 20 || length password < 10 of
