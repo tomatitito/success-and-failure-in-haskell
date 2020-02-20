@@ -54,6 +54,13 @@ validatePassword (Password password) =
 --  cleanWhitespace password
 --    >>= requireAlphaNum
 --    >>= checkPasswordLength
+
+makeUserTmpPassword :: Username -> Either Error User
+makeUserTmpPassword username =
+  User <$> validateUsername username
+       <*> (validatePassword $ Password "temporaryPassword")
+--       This also works
+--       <*> pure (Password "temporayPassword")
     
 validateUsername :: Username -> Either Error Username
 validateUsername (Username username) =
