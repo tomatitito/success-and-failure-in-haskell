@@ -69,16 +69,14 @@ bindStringOrValue x f =
     Val x' -> f x'
 
 main :: IO ()
-main = do
+main = 
+--  do
+--  putStr "Enter Password\n"
+--  password <-Password <$> getLine
+--  print (validatePassword password)
   putStr "Enter Password\n"
-  password <-Password <$> getLine
-  print (validatePassword password)
-
-printTestResult :: Either String () -> IO ()
-printTestResult r =
-  case r of
-    Left err -> putStrLn err
-    Right () -> putStrLn "All tests passed."
+    >> Password <$> getLine
+    >>= print <$> validatePassword
 
 eq :: (Eq a, Show a) => Int -> a -> a -> Either String ()
 eq n actual expected =
