@@ -9,7 +9,7 @@ newtype Error = Error String deriving Show
 data User = User Username Password deriving Show
 
 makeUser :: Username -> Password -> Either Error User
-makeUser username password = 
+makeUser username password =
   User <$> validateUsername username
        <*> validatePassword password
 
@@ -61,7 +61,7 @@ makeUserTmpPassword username =
        <*> (validatePassword $ Password "temporaryPassword")
 --       This also works
 --       <*> pure (Password "temporayPassword")
-    
+
 validateUsername :: Username -> Either Error Username
 validateUsername (Username username) =
   cleanWhitespace username
@@ -88,15 +88,18 @@ bindStringOrValue x f =
 
 main :: IO ()
 main = 
+-- Original Version:
   do
     putStr "Enter username\n"
     username <- Username <$> getLine
     putStr "Enter password\n"
     password <-Password <$> getLine
     print (makeUser username password)
+-- Alternative Version:
 --  putStr "Enter Password\n"
 --    >> Password <$> getLine
 --    >>= print <$> validatePassword
+
 
 --printTestResult :: Either Error () -> IO ()
 --printTestResult r =
