@@ -2,9 +2,9 @@ module Main where
 
 import Data.Char
 
-newtype Password = Password String deriving Show
-newtype Username = Username String deriving Show
-newtype Error = Error String deriving Show
+newtype Password = Password String deriving (Show, Eq)
+newtype Username = Username String deriving (Show, Eq)
+newtype Error = Error String deriving (Show, Eq)
 
 data User = User Username Password deriving Show
 
@@ -101,21 +101,21 @@ main =
 --    >>= print <$> validatePassword
 
 
---printTestResult :: Either Error () -> IO ()
---printTestResult r =
---  case r of
---    Left (Error err) -> putStrLn err
---    Right () -> putStrLn "All tests passed."
---
---eq :: (Eq a, Show a) => Int -> a -> a -> Either String ()
---eq n actual expected =
---  case (actual == expected) of
---    True -> Right ()
---    False -> Left (unlines ["Test " ++ show n , " Expected: " ++ show expected, " But got: " ++ show actual])
---
---test :: IO ()
---test = printTestResult $
---  do
---    eq 1 (checkPasswordLength "") (checkPasswordLength "")--(Left (Error "Your password must be between 10 and 20 characters long"))
-----    eq 2 (checkPasswordLength "julielovesbooks") (Right $ Password "julielovesbooks")
-----    eq 3 (validatePassword "1234567890") (Left $ Error "Your password must be between 10 and 20 characters long")
+printTestResult :: Either Error () -> IO ()
+printTestResult r =
+  case r of
+    Left (Error err) -> putStrLn err
+    Right () -> putStrLn "All tests passed."
+
+eq :: (Eq a, Show a) => Int -> a -> a -> Either Error ()
+eq n actual expected =
+  case (actual == expected) of
+    True -> Right ()
+    False -> Left (Error (unlines ["Test " ++ show n , " Expected: " ++ show expected, " But got: " ++ show actual]))
+
+test :: IO ()
+test = printTestResult $
+  do
+    eq 1 (checkPasswordLength "") (checkPasswordLength "")--(Left (Error "Your password must be between 10 and 20 characters long"))
+    eq 2 (checkPasswordLength "julielovesbooks") (Right $ Password "julielovesbooks")
+    eq 3 (validatePassword (Password "1234567890")) (Left $ Error "Your password must be between 10 and 20 characters long")
