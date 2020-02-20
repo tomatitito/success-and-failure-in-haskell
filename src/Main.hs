@@ -74,13 +74,16 @@ bindStringOrValue x f =
 
 main :: IO ()
 main = 
---  do
+  do
+    putStr "Enter username\n"
+    username <- Username <$> getLine
+    putStr "Enter password\n"
+    password <-Password <$> getLine
+    print (validateUsername username)
+    print (validatePassword password)
 --  putStr "Enter Password\n"
---  password <-Password <$> getLine
---  print (validatePassword password)
-  putStr "Enter Password\n"
-    >> Password <$> getLine
-    >>= print <$> validatePassword
+--    >> Password <$> getLine
+--    >>= print <$> validatePassword
 
 --printTestResult :: Either Error () -> IO ()
 --printTestResult r =
