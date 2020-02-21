@@ -6,7 +6,7 @@ import Data.Validation
 
 newtype Password = Password String deriving (Show, Eq)
 newtype Username = Username String deriving (Show, Eq)
-newtype Error = Error String deriving (Show, Eq)
+newtype Error = Error [String] deriving (Show, Eq)
 
 data User = User Username Password deriving Show
 
@@ -18,29 +18,29 @@ makeUser username password =
 checkPasswordLength :: String -> Either Error Password
 checkPasswordLength password =
   case length password > 20 || length password < 10 of
-    True -> Left (Error "Your password must be between 10 and 20 characters long")
+    True -> Left (Error ["Your password must be between 10 and 20 characters long"])
     False -> Right (Password password)
     
 checkUsernameLength :: String -> Either Error Username
 checkUsernameLength username =
   case length username > 15 of
-    True -> Left (Error "Username cannot be longer than 15 characters")
+    True -> Left (Error ["Username cannot be longer than 15 characters"])
     False -> Right (Username username)
 
 checkLength :: Int -> String -> Either Error String
 checkLength len xs =
   case (length xs) > len of
-    True -> Left (Error "Too many characters given")
+    True -> Left (Error ["Too many characters given"])
     False -> Right xs
 
 requireAlphaNum :: String -> Either Error String
 requireAlphaNum xs =
   case all isAlphaNum xs of
-    False -> Left (Error "Only alphanumeric characters are allowed")
+    False -> Left (Error ["Only alphanumeric characters are allowed"])
     True -> Right xs
 
 cleanWhitespace :: String -> Either Error String
-cleanWhitespace "" = Left (Error "Empty string is not allowed")
+cleanWhitespace "" = Left (Error ["Empty string is not allowed"])
 cleanWhitespace (x:xs) =
   case isSpace x of
     True -> cleanWhitespace xs
@@ -106,18 +106,18 @@ main =
 printTestResult :: Either Error () -> IO ()
 printTestResult r =
   case r of
-    Left (Error err) -> putStrLn err
+    Left (Error [err]) -> putStrLn err
     Right () -> putStrLn "All tests passed."
 
 eq :: (Eq a, Show a) => Int -> a -> a -> Either Error ()
 eq n actual expected =
   case (actual == expected) of
     True -> Right ()
-    False -> Left (Error (unlines ["Test " ++ show n , " Expected: " ++ show expected, " But got: " ++ show actual]))
+    False -> Left (Error [(unlines ["Test " ++ show n , " Expected: " ++ show expected, " But got: " ++ show actual])])
 
 test :: IO ()
 test = printTestResult $
   do
-    eq 1 (checkPasswordLength "") (checkPasswordLength "")--(Left (Error "Your password must be between 10 and 20 characters long"))
+    eq 1 (checkPasswordLength "") (checkPasswordLength "")--(Left (Error ["Your password must be between 10 and 20 characters long"]))
     eq 2 (checkPasswordLength "julielovesbooks") (Right $ Password "julielovesbooks")
-    eq 3 (validatePassword (Password "1234567890")) (Left $ Error "Your password must be between 10 and 20 characters long")
+    eq 3 (validatePassword (Password "1234567890")) (Left $ Error ["Your password must be between 10 and 20 characters long"])
