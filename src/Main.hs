@@ -1,6 +1,8 @@
 module Main where
 
+
 import Data.Char
+import Data.Validation
 
 newtype Password = Password String deriving (Show, Eq)
 newtype Username = Username String deriving (Show, Eq)
