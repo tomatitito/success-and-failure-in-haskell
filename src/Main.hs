@@ -1,3 +1,6 @@
+{-# LANGUAGE GeneralisedNewtypeDeriving #-}
+
+
 module Main where
 
 
@@ -6,47 +9,47 @@ import Data.Validation
 
 newtype Password = Password String deriving (Show, Eq)
 newtype Username = Username String deriving (Show, Eq)
-newtype Error = Error [String] deriving (Show, Eq)
+newtype Error = Error [String] deriving (Show, Eq, Semigroup)
 
 data User = User Username Password deriving Show
 
-makeUser :: Username -> Password -> Either Error User
+makeUser :: Username -> Password -> Validation Error User
 makeUser username password =
   User <$> validateUsername username
        <*> validatePassword password
 
-checkPasswordLength :: String -> Either Error Password
+checkPasswordLength :: String -> Validation Error Password
 checkPasswordLength password =
   case length password > 20 || length password < 10 of
-    True -> Left (Error ["Your password must be between 10 and 20 characters long"])
-    False -> Right (Password password)
+    True -> Failure (Error ["Your password must be between 10 and 20 characters long"])
+    False -> Success (Password password)
     
-checkUsernameLength :: String -> Either Error Username
+checkUsernameLength :: String -> Validation Error Username
 checkUsernameLength username =
   case length username > 15 of
-    True -> Left (Error ["Username cannot be longer than 15 characters"])
-    False -> Right (Username username)
+    True -> Failure (Error ["Username cannot be longer than 15 characters"])
+    False -> Success (Username username)
 
-checkLength :: Int -> String -> Either Error String
+checkLength :: Int -> String -> Validation Error String
 checkLength len xs =
   case (length xs) > len of
-    True -> Left (Error ["Too many characters given"])
-    False -> Right xs
+    True -> Failure (Error ["Too many characters given"])
+    False -> Success xs
 
-requireAlphaNum :: String -> Either Error String
+requireAlphaNum :: String -> Validation Error String
 requireAlphaNum xs =
   case all isAlphaNum xs of
-    False -> Left (Error ["Only alphanumeric characters are allowed"])
-    True -> Right xs
+    False -> Failure (Error ["Only alphanumeric characters are allowed"])
+    True -> Success xs
 
-cleanWhitespace :: String -> Either Error String
-cleanWhitespace "" = Left (Error ["Empty string is not allowed"])
+cleanWhitespace :: String -> Validation Error String
+cleanWhitespace "" = Failure (Error ["Empty string is not allowed"])
 cleanWhitespace (x:xs) =
   case isSpace x of
     True -> cleanWhitespace xs
-    False -> Right (x:xs)
+    False -> Success (x:xs)
 
-validatePassword :: Password -> Either Error Password
+validatePassword :: Password -> Validation Error Password
 validatePassword (Password password) =
 --    (bindMaybe (bindMaybe (cleanWhitespace password) requireAlphaNum) checkPasswordLength)
   do
@@ -57,14 +60,14 @@ validatePassword (Password password) =
 --    >>= requireAlphaNum
 --    >>= checkPasswordLength
 
-makeUserTmpPassword :: Username -> Either Error User
+makeUserTmpPassword :: Username -> Validation Error User
 makeUserTmpPassword username =
   User <$> validateUsername username
        <*> (validatePassword $ Password "temporaryPassword")
 --       This also works
 --       <*> pure (Password "temporayPassword")
 
-validateUsername :: Username -> Either Error Username
+validateUsername :: Username -> Validation Error Username
 validateUsername (Username username) =
   cleanWhitespace username
     >>= requireAlphaNum
@@ -91,33 +94,33 @@ bindStringOrValue x f =
 main :: IO ()
 main = 
 -- Original Version:
-  do
-    putStr "Enter username\n"
-    username <- Username <$> getLine
-    putStr "Enter password\n"
-    password <-Password <$> getLine
-    print (makeUser username password)
+--  do
+--    putStr "Enter username\n"
+--    username <- Username <$> getLine
+--    putStr "Enter password\n"
+--    password <-Password <$> getLine
+--    print (makeUser username password)
 -- Alternative Version:
---  putStr "Enter Password\n"
---    >> Password <$> getLine
---    >>= print <$> validatePassword
+  putStr "Enter Password\n"
+    >> Password <$> getLine
+    >>= print <$> validatePassword
 
 
-printTestResult :: Either Error () -> IO ()
+printTestResult :: Validation Error () -> IO ()
 printTestResult r =
   case r of
-    Left (Error [err]) -> putStrLn err
-    Right () -> putStrLn "All tests passed."
+    Failure (Error [err]) -> putStrLn err
+    Success () -> putStrLn "All tests passed."
 
-eq :: (Eq a, Show a) => Int -> a -> a -> Either Error ()
+eq :: (Eq a, Show a) => Int -> a -> a -> Validation Error ()
 eq n actual expected =
   case (actual == expected) of
-    True -> Right ()
-    False -> Left (Error [(unlines ["Test " ++ show n , " Expected: " ++ show expected, " But got: " ++ show actual])])
+    True -> Success ()
+    False -> Failure (Error [(unlines ["Test " ++ show n , " Expected: " ++ show expected, " But got: " ++ show actual])])
 
 test :: IO ()
 test = printTestResult $
   do
-    eq 1 (checkPasswordLength "") (checkPasswordLength "")--(Left (Error ["Your password must be between 10 and 20 characters long"]))
-    eq 2 (checkPasswordLength "julielovesbooks") (Right $ Password "julielovesbooks")
-    eq 3 (validatePassword (Password "1234567890")) (Left $ Error ["Your password must be between 10 and 20 characters long"])
+    eq 1 (checkPasswordLength "") (checkPasswordLength "")--(Failure (Error ["Your password must be between 10 and 20 characters long"]))
+    eq 2 (checkPasswordLength "julielovesbooks") (Success $ Password "julielovesbooks")
+    eq 3 (validatePassword (Password "1234567890")) (Failure $ Error ["Your password must be between 10 and 20 characters long"])
