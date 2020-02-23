@@ -51,14 +51,22 @@ cleanWhitespace (x:xs) =
 
 validatePassword :: Password -> Validation Error Password
 validatePassword (Password password) =
---    (bindMaybe (bindMaybe (cleanWhitespace password) requireAlphaNum) checkPasswordLength)
-  do
-    password' <- cleanWhitespace password
-    password'' <- requireAlphaNum password'
-    checkPasswordLength password''
+--  Original Version:
 --  cleanWhitespace password
 --    >>= requireAlphaNum
 --    >>= checkPasswordLength
+--  Alternative Version using bindMaybe: 
+--    (bindMaybe (bindMaybe (cleanWhitespace password) requireAlphaNum) checkPasswordLength)
+--  Alternative Version using do:
+--  do
+--    password' <- cleanWhitespace password
+--    password'' <- requireAlphaNum password'
+--    checkPasswordLength password''
+--  Alternative Version in appliativa style:
+    case cleanWhitespace password of
+      Failure err -> Failure err
+      Success password2 -> 
+        requireAlphaNum password2 *> checkPasswordLength password2
 
 makeUserTmpPassword :: Username -> Validation Error User
 makeUserTmpPassword username =
