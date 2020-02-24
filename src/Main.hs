@@ -101,7 +101,7 @@ bindStringOrValue x f =
 
 main :: IO ()
 main = 
--- Original Version:
+--  Original Version:
 --  do
 --    putStr "Enter username\n"
 --    username <- Username <$> getLine
@@ -127,8 +127,7 @@ eq n actual expected =
     False -> Failure (Error [(unlines ["Test " ++ show n , " Expected: " ++ show expected, " But got: " ++ show actual])])
 
 test :: IO ()
-test = printTestResult $
-  do
-    eq 1 (checkPasswordLength "") (checkPasswordLength "")--(Failure (Error ["Your password must be between 10 and 20 characters long"]))
-    eq 2 (checkPasswordLength "julielovesbooks") (Success $ Password "julielovesbooks")
-    eq 3 (validatePassword (Password "1234567890")) (Failure $ Error ["Your password must be between 10 and 20 characters long"])
+test = printTestResult $ 
+           eq 1 (checkPasswordLength "") (Failure (Error ["Your password must be between 10 and 20 characters long"])) -- does not work, why? (checkPasswordLength "")
+        *> eq 2 (checkPasswordLength "julielovesbooks") (Success $ Password "julielovesbooks")
+        *> eq 3 (validatePassword (Password "1234567890")) (Failure $ Error ["Your password must be between 10 and 20 characters long"])
