@@ -77,9 +77,13 @@ makeUserTmpPassword username =
 
 validateUsername :: Username -> Validation Error Username
 validateUsername (Username username) =
-  cleanWhitespace username
-    >>= requireAlphaNum
-    >>= checkUsernameLength
+  case cleanWhitespace username of
+    Failure err -> Failure err
+    Success username2 -> requireAlphaNum username2
+                      *> checkUsernameLength username2
+--  cleanWhitespace username
+--    >>= requireAlphaNum
+--    >>= checkUsernameLength
 
 reverseLine :: IO ()
 reverseLine = do
