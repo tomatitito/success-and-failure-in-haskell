@@ -1,4 +1,5 @@
 {-# LANGUAGE GeneralisedNewtypeDeriving #-}
+{-# LANGUAGE ApplicativeDo #-}
 
 
 module Main where
@@ -15,9 +16,15 @@ data User = User Username Password deriving Show
 
 makeUser :: Username -> Password -> Validation Error User
 makeUser username password =
-  User <$> validateUsername username
-       <*> validatePassword password
-
+-- using AppicativeDo
+  do
+    name <- validateUsername username
+    pass <- validatePassword password
+    pure (User name pass)
+-- Original Version:
+--  User <$> validateUsername username
+--       <*> validatePassword password
+       
 checkPasswordLength :: String -> Validation Error Password
 checkPasswordLength password =
   case length password > 20 || length password < 10 of
