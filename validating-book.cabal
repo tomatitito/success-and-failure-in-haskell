@@ -19,3 +19,4 @@ executable validating-book
   default-language:    Haskell2010
   build-depends:       base >= 4.7 && < 5
                      , validation
+                     , text
