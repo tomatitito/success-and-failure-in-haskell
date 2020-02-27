@@ -1,5 +1,6 @@
 {-# LANGUAGE GeneralisedNewtypeDeriving #-}
 {-# LANGUAGE ApplicativeDo #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 
 module Main where
