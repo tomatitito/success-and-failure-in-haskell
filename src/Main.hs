@@ -11,9 +11,9 @@ import Data.Validation
 import qualified Data.Text as T
 import qualified Data.Text.IO as T
 
-newtype Password = Password String deriving (Show, Eq)
-newtype Username = Username String deriving (Show, Eq)
-newtype Error = Error [String] deriving (Show, Eq, Semigroup)
+newtype Password = Password T.Text deriving (Show, Eq)
+newtype Username = Username T.Text deriving (Show, Eq)
+newtype Error = Error [T.Text] deriving (Show, Eq, Semigroup)
 
 data User = User Username Password deriving Show
 
@@ -28,36 +28,41 @@ makeUser username password =
 --  User <$> validateUsername username
 --       <*> validatePassword password
        
-checkPasswordLength :: String -> Validation Error Password
+checkPasswordLength :: T.Text -> Validation Error Password
 checkPasswordLength password =
-  case length password > 20 || length password < 10 of
+  case T.length password > 20 || T.length password < 10 of
     True -> Failure (Error ["Your password must be between 10 and 20 characters long"])
     False -> Success (Password password)
     
-checkUsernameLength :: String -> Validation Error Username
+checkUsernameLength :: T.Text -> Validation Error Username
 checkUsernameLength username =
-  case length username > 15 of
+  case T.length username > 15 of
     True -> Failure (Error ["Username cannot be longer than 15 characters"])
     False -> Success (Username username)
 
-checkLength :: Int -> String -> Validation Error String
+checkLength :: Int -> T.Text -> Validation Error T.Text
 checkLength len xs =
-  case (length xs) > len of
+  case (T.length xs) > len of
     True -> Failure (Error ["Too many characters given"])
     False -> Success xs
 
-requireAlphaNum :: String -> Validation Error String
+requireAlphaNum :: T.Text -> Validation Error T.Text
 requireAlphaNum xs =
-  case all isAlphaNum xs of
+  case T.all isAlphaNum xs of
     False -> Failure (Error ["Only alphanumeric characters are allowed"])
     True -> Success xs
 
-cleanWhitespace :: String -> Validation Error String
-cleanWhitespace "" = Failure (Error ["Empty string is not allowed"])
-cleanWhitespace (x:xs) =
-  case isSpace x of
-    True -> cleanWhitespace xs
-    False -> Success (x:xs)
+cleanWhitespace :: T.Text -> Validation Error T.Text
+--cleanWhitespace "" = Failure (Error ["Empty T.Text is not allowed"])
+--cleanWhitespace (x:xs) =
+--  case isSpace x of
+--    True -> cleanWhitespace xs
+--    False -> Success (x:xs)
+cleanWhitespace input =
+  if T.null input
+    then Failure "Empty string is not allowed"
+    else Success $ T.strip input
+  
 
 validatePassword :: Password -> Validation Error Password
 validatePassword (Password password) =
@@ -105,7 +110,7 @@ bindMaybe :: Maybe a -> (a -> Maybe b) -> Maybe b
 bindMaybe (Just a) f = f a
 bindMaybe Nothing f = Nothing
 
-data StringOrValue a = Str String | Val a deriving Show
+data StringOrValue a = Str T.Text | Val a deriving Show
 
 bindStringOrValue :: StringOrValue a -> (a -> StringOrValue b) -> StringOrValue b
 bindStringOrValue x f =
@@ -124,7 +129,7 @@ main =
 --    print (makeUser username password)
 -- Alternative Version:
   putStr "Enter Password\n"
-    >> Password <$> getLine
+    >> Password <$> T.getLine
     >>= print <$> validatePassword
 
 
@@ -138,7 +143,8 @@ eq :: (Eq a, Show a) => Int -> a -> a -> Validation Error ()
 eq n actual expected =
   case (actual == expected) of
     True -> Success ()
-    False -> Failure (Error [(unlines ["Test " ++ show n , " Expected: " ++ show expected, " But got: " ++ show actual])])
+    False -> Failure (Error ["Test " ++ show n , " Expected: " ++ show expected, " But got: " ++ show actual])
+--    False -> Failure (Error ["Test " ++ show n , " Expected: " ++ show expected])
 
 test :: IO ()
 test = printTestResult $ 
